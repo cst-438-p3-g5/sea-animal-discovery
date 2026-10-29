@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+.gradle/
+**/build/
+local.properties
+.externalNativeBuild/
+.cxx/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+*.class
+*.tmp
