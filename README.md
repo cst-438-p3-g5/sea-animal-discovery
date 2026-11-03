@@ -43,7 +43,3 @@ Run the backend using Docker:
 ```bash
 docker compose up --build
 ```
-
-## Development
-
-The project uses a shared Expo frontend, allowing developers to build features once for Web, Android, and iOS. The backend is maintained separately in the `api/` directory.
