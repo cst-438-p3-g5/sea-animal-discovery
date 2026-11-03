@@ -1,66 +1,46 @@
-# Product Requirements Document (PRD): `<product name>`
+# Product Requirements Document (PRD): Tidepool
 
-> Copy this file to `docs/prd.md` in your team repo and replace everything in angle brackets.
-> Keep it to **one page**. Commit it **before the group proposal presentation**; the commit date is checked.
-> After the presentation, change it only through pull requests, so the history shows what changed and why.
-> Your Final Submission is graded against this document.
-
-**Team:** `<team name>` · **Repo:** `<link>` · **Last updated:** `<date>`
+**Team:** `Group 5` · **Repo:** `https://github.com/cst-438-p3-g5/sea-animal-discovery` · **Last updated:** 2026-11-02
 
 ---
 
 ## 1. Users
 
-Who is this for? Name **one** primary user type and describe them in one or two sentences.
-"Everyone" and "students" are not user types; "a first-year student looking for a study group for
-one specific course" is.
-
-- **Primary user:** `<who they are, what they are trying to do>`
-- **Secondary user (optional):** `<for example, an admin>`
+- **Primary user:** A beginner tidepool or beach explorer who encounters unfamiliar sea animals and wants to identify them and keep a personal record of their discoveries.
 
 ## 2. Problem
 
-Two sentences: what the user struggles with today, and why existing options fall short.
-
-`<problem statement>`
+Beginner tidepool explorers often struggle to identify unfamiliar sea animals and organize records of what they discover at the beach. Existing resources may provide animal information but do not offer a simple, unified way to explore species profiles and save personal sightings.
 
 ## 3. Success measures
 
-Three measurable signals that would show the product works. Each one needs a number and a way to
-check it.
-
-| # | Measure | Target | How we check it |
+| **#** | **Measure** | **Target** | **How we check it** |
 |---|---|---|---|
-| S1 | `<e.g., a new user creates their first study session>` | `<under 2 minutes>` | `<timed during the onboarding test>` |
-| S2 | | | |
-| S3 | | | |
+| S1 | Find a species profile and record a sighting | Under 2 minutes | Timed usability test with 3 new users |
+| S2 | Users can view and manage their saved sightings | 100% of tested create, view, edit, and delete actions succeed | Automated API and client tests |
+| S3 | Main discovery and sighting flow works on web and Android | 100% of required flow steps work on both platforms | Playwright web test and manual Android testing |
 
 ## 4. Scope: MVP, vertical slice, and not building
 
-**MVP** is the smallest set of stories that makes *this* product useful. It always includes the
-account baseline (sign in with GitHub and Google, update profile, delete account) **plus** the
-stories specific to your product.
-
-- **MVP stories:** `<PRD-1, PRD-2, ...>` (listed in section 5)
-- **Vertical slice:** `<the one MVP story you will polish end to end and test with Playwright>`
-- **Not building (this term):** `<at least three things a reader might expect that you are deliberately leaving out>`
+- **MVP stories:** PRD-1, PRD-2, PRD-3, PRD-4, PRD-5, PRD-6.
+- **Vertical slice:** PRD-3, recording a sighting. A user browses the species catalog, opens a profile, signs in, records a sighting, and sees it in "My Sightings." This will use the real database, API, and web client, with Playwright and accessibility testing, and will also be supported on Android.
+- **Not building (this term):** Social feeds, comments or likes; AI-powered animal identification; public sighting maps or GPS tracking; offline synchronization; push notifications; and iOS support.
 
 ## 5. User stories and acceptance criteria
 
-One row per MVP story. Each GitHub issue links to its story ID (`PRD-3`) and each story has at
-least one acceptance criterion in **Given / When / Then** form that someone outside the team could
-test.
-
-| ID | Story | Acceptance criteria |
+| **ID** | **Story** | **Acceptance criteria** |
 |---|---|---|
-| PRD-1 | As a `<user>`, I want to `<action>` so that `<benefit>`. | **Given** `<state>`, **when** `<action>`, **then** `<observable result>`. |
-| PRD-2 | | |
-| PRD-3 | | |
+| PRD-1 | As a user, I want to sign in with GitHub or Google so that I can securely save my discoveries. | **Given** I have a verified provider account, **when** I sign in successfully, **then** I can access my personal account. |
+| PRD-2 | As a user, I want to update my profile and delete my account so that I can manage my personal information. | **Given** I am signed in, **when** I update my profile, **then** my changes are saved. **When** I delete my account, **then** my profile and personal sightings are removed. |
+| PRD-3 | As a user, I want to record a sea animal sighting so that I can remember what I discovered. | **Given** I am signed in and viewing a species, **when** I submit a valid sighting with a date, **then** it is saved and linked to my account and that species. |
+| PRD-4 | As a visitor, I want to browse sea animal profiles so that I can identify animals and learn about their habitats. | **Given** the catalog contains species, **when** I select an animal, **then** I see its name, identification details, habitat, and conservation information. |
+| PRD-5 | As a user, I want to view my saved sightings so that I can revisit my discoveries. | **Given** I have recorded sightings, **when** I open "My Sightings," **then** I see only my sightings with their species and dates. |
+| PRD-6 | As a user, I want to edit or delete my sightings so that my records remain accurate. | **Given** I own a sighting, **when** I edit or delete it, **then** my changes are saved or the sighting is removed. Other users cannot modify it. |
 
 ---
 
 ### Change log
 
-| Date | PR | What changed and why |
+| **Date** | **PR** | **What changed and why** |
 |---|---|---|
-| `<date>` | `#<n>` | Initial version |
+| 2026-11-02 | 1 | Initial PRD based on the team's project plan. |
