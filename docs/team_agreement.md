@@ -1,31 +1,28 @@
 # Team Agreement: `Group 5`
 
-> Copy this file to `docs/team_agreement.md` in your team repo and commit it in Sprint 1.
-> Change it only through a pull request. Your PR report links to this file as it stood that
-> sprint: open it on GitHub, press `y` to get a permalink to the commit, and use that link.
-
 ## PR deadline
 
 The course deadline is the outer limit: PR open by **2:00 AM Thursday**, reviewed and merged by
 **10:00 AM Thursday**. Our own deadline is earlier:
 
-- **Our PRs are open by:** `<day and time, e.g. Tuesday 9:00 PM>`
-- **Why that time works for us:** `<one sentence>`
+- **Our PRs are open by:** `9:00 PM Wednesday`
+- **Why that time works for us:** `It is a time that is after all of our classes`
 
 ## Reviews
 
-- **A requested reviewer responds within:** `<e.g. 12 hours>`
-- **A PR that needs changes is updated within:** `<e.g. 12 hours>`
+- **A requested reviewer responds within:** `8 Hours`
+- **A PR that needs changes is updated within:** `12 Hours`
 
 ## Communication
 
-- **Team channel:** `<Discord / Slack / other>`
-- **How someone says they are out** (so the deputy can merge): `<e.g. post in #standup before the sprint deadline>`
+- **Team channel:** `Slack`
+- **How someone says they are out** `@ The merge deputy and let them know 1 day in advance`
 
 ## Signed
 
-Everyone on the team adds their name and GitHub username in the PR that commits this file.
-
 | Name | GitHub |
 |---|---|
-| | |
+| `Athien Camberos` | `acamberos1` |
+| `Anthony Ramirez` | `anthonyduenez` |
+| `Caleb Stark` | `caleb-stark` |
+| `Julian Mendoza` | `julian-men` |
