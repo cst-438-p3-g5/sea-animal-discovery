@@ -24,6 +24,9 @@ sea-animal-discovery/
 
 ### Local API and database
 
+First copy `.env.example` to `.env` and set a random `JWT_SECRET` (at least
+32 bytes). See [GitHub sign-in setup](docs/github-sign-in.md) to configure OAuth.
+
 ```bash
 docker compose up --build
 ```
