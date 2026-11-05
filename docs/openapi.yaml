@@ -1,0 +1,472 @@
+openapi: 3.1.0
+info:
+  title: Tidepool API
+  version: 0.1.0
+  description: |
+    API contract for Tidepool (sea-animal-discovery), CST 438 Project 3, Group 5.
+    Field names match docs/erd.md. Every error response uses the RFC 9457
+    Problem Details model described in docs/problem-details.md.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development
+
+tags:
+  - name: auth
+    description: Sign in with GitHub or Google (PRD-1)
+  - name: users
+    description: Profile and account (PRD-2)
+  - name: species
+    description: Species catalog (PRD-4)
+  - name: sightings
+    description: Record, view, edit, and delete sightings (PRD-3, PRD-5, PRD-6)
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/github:
+    post:
+      tags: [auth]
+      summary: Exchange a GitHub authorization code for an app JWT
+      description: The client gets the code using Authorization Code + PKCE. The API exchanges it with GitHub, verifies the identity, and returns its own JWT.
+      operationId: signInWithGithub
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/AuthCodeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/google:
+    post:
+      tags: [auth]
+      summary: Exchange a Google authorization code for an app JWT
+      description: Same flow as /auth/github, using Google as the provider.
+      operationId: signInWithGoogle
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/AuthCodeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/AuthSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users/me:
+    get:
+      tags: [users]
+      summary: Get the signed-in user's profile
+      operationId: getMyProfile
+      responses:
+        '200':
+          description: The signed-in user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags: [users]
+      summary: Update the signed-in user's profile
+      operationId: updateMyProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Profile saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [users]
+      summary: Delete the signed-in user's account
+      description: Removes the user's profile and all of their sightings.
+      operationId: deleteMyAccount
+      responses:
+        '204':
+          description: Account and sightings deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /species:
+    get:
+      tags: [species]
+      summary: List the species catalog
+      operationId: listSpecies
+      security: []
+      responses:
+        '200':
+          description: All species in the catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Species'
+
+  /species/{id}:
+    get:
+      tags: [species]
+      summary: Get one species profile
+      operationId: getSpecies
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: The species profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Species'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /sightings:
+    post:
+      tags: [sightings]
+      summary: Record a sighting for the signed-in user
+      description: Vertical slice (PRD-3). The sighting is linked to the signed-in user and the given species.
+      operationId: createSighting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SightingCreate'
+      responses:
+        '201':
+          description: Sighting created
+          headers:
+            Location:
+              description: URL of the new sighting
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sighting'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /sightings/me:
+    get:
+      tags: [sightings]
+      summary: List the signed-in user's sightings
+      description: Returns only the current user's sightings, newest first (PRD-5).
+      operationId: listMySightings
+      responses:
+        '200':
+          description: The current user's sightings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sighting'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /sightings/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [sightings]
+      summary: Get one of the signed-in user's sightings
+      operationId: getSighting
+      responses:
+        '200':
+          description: The sighting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sighting'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [sightings]
+      summary: Edit a sighting the signed-in user owns
+      operationId: updateSighting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SightingUpdate'
+      responses:
+        '200':
+          description: Sighting saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sighting'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [sightings]
+      summary: Delete a sighting the signed-in user owns
+      operationId: deleteSighting
+      responses:
+        '204':
+          description: Sighting deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: The app JWT returned by /auth/github or /auth/google.
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+
+  requestBodies:
+    AuthCodeRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthCodeRequest'
+
+  schemas:
+    AuthCodeRequest:
+      type: object
+      required: [code, code_verifier, redirect_uri]
+      properties:
+        code:
+          type: string
+          description: Authorization code from the provider
+        code_verifier:
+          type: string
+          description: PKCE code verifier
+        redirect_uri:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [access_token, token_type, user]
+      properties:
+        access_token:
+          type: string
+          description: App JWT
+        token_type:
+          type: string
+          const: Bearer
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      required: [id, email, display_name]
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        display_name:
+          type: string
+
+    UserUpdate:
+      type: object
+      required: [display_name]
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+
+    Species:
+      type: object
+      required: [id, common_name, identification_details, habitat, conservation_information]
+      properties:
+        id:
+          type: string
+        common_name:
+          type: string
+        identification_details:
+          type: string
+        habitat:
+          type: string
+        conservation_information:
+          type: string
+
+    Sighting:
+      type: object
+      required: [id, user_id, species_id, sighting_date]
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        species_id:
+          type: string
+        sighting_date:
+          type: string
+          format: date
+        notes:
+          type: [string, 'null']
+
+    SightingCreate:
+      type: object
+      required: [species_id, sighting_date]
+      properties:
+        species_id:
+          type: string
+        sighting_date:
+          type: string
+          format: date
+          description: Required. Cannot be in the future.
+        notes:
+          type: string
+          maxLength: 500
+
+    SightingUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        sighting_date:
+          type: string
+          format: date
+        notes:
+          type: string
+          maxLength: 500
+
+    ProblemDetails:
+      type: object
+      description: RFC 9457 Problem Details. See docs/problem-details.md.
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: URI that identifies the kind of problem
+        title:
+          type: string
+          description: Short summary that stays the same for this type
+        status:
+          type: integer
+          description: HTTP status code
+        detail:
+          type: string
+          description: Explanation specific to this occurrence
+        instance:
+          type: string
+          format: uri-reference
+          description: The request path that caused the problem
+        errors:
+          type: array
+          description: Field-level problems (validation errors only)
+          items:
+            $ref: '#/components/schemas/FieldError'
+
+    FieldError:
+      type: object
+      required: [field, message]
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+
+  responses:
+    AuthSuccess:
+      description: Signed in. Returns the app JWT and the user.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthResponse'
+    ValidationError:
+      description: The request body failed validation
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: /problems/validation-error
+            title: Validation failed
+            status: 400
+            detail: One or more fields are invalid.
+            instance: /sightings
+            errors:
+              - field: sighting_date
+                message: must not be in the future
+    Unauthorized:
+      description: Missing, invalid, or expired token, or the provider rejected the code
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: /problems/unauthorized
+            title: Unauthorized
+            status: 401
+            detail: A valid bearer token is required.
+            instance: /sightings/me
+    Forbidden:
+      description: The resource belongs to another user
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: /problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: You can only view or change your own sightings.
+            instance: /sightings/s-123
+    NotFound:
+      description: The resource does not exist
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: /problems/not-found
+            title: Not found
+            status: 404
+            detail: No species with id sp-999.
+            instance: /species/sp-999
