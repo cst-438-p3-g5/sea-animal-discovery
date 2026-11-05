@@ -22,10 +22,36 @@ sea-animal-discovery/
 
 ## Getting Started
 
-### Frontend
+### Local API and database
 
 ```bash
-cd app
+docker compose up --build
+```
+
+This starts the API at <http://localhost:8080> and PostgreSQL on port `5432`.
+Compose waits for PostgreSQL to pass its health check before starting the API.
+The API health endpoint is <http://localhost:8080/health> and returns
+`{"status":"UP"}` when the HTTP server is responding.
+The database defaults are for local development and can be overridden with
+`POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` environment variables.
+Use `docker compose down` to stop the services. Add `-v` only when you also
+want to remove the local PostgreSQL data volume.
+
+### Run API tests
+
+```bash
+cd api
+./gradlew test
+```
+
+On Windows, use `gradlew.bat test`.
+
+### Frontend
+
+The Expo app lives in `app/sea-animal-discovery`:
+
+```bash
+cd app/sea-animal-discovery
 npm install
 npx expo start
 ```
@@ -35,11 +61,3 @@ Once Expo starts, press:
 - `w` to open Web
 - `a` to open Android
 - `i` to open iOS (macOS)
-
-### Backend
-
-Run the backend using Docker:
-
-```bash
-docker compose up --build
-```
