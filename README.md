@@ -32,10 +32,19 @@ This starts the API at <http://localhost:8080> and PostgreSQL on port `5432`.
 Compose waits for PostgreSQL to pass its health check before starting the API.
 The API health endpoint is <http://localhost:8080/health> and returns
 `{"status":"UP"}` when the HTTP server is responding.
+The database health endpoint is <http://localhost:8080/actuator/health>; its
+`db` component reports whether the API can connect to PostgreSQL.
 The database defaults are for local development and can be overridden with
 `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` environment variables.
 Use `docker compose down` to stop the services. Add `-v` only when you also
 want to remove the local PostgreSQL data volume.
+
+To use Supabase instead, copy `.env.example` to `.env`, uncomment and fill in
+the `SPRING_DATASOURCE_*` values from your Supabase project's **Connect** panel,
+then run `docker compose up --build`. Use the JDBC **Session pooler** connection
+on port `5432` with `sslmode=require`. Compose still starts its local PostgreSQL
+container, but the API uses the Supabase connection when `SPRING_DATASOURCE_URL`
+is set. Never commit `.env` or put database credentials in the client app.
 
 ### Run API tests
 

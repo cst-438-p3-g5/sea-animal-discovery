@@ -15,9 +15,10 @@ services:
   api:
     build: ./api
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-project03}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-project03}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/${POSTGRES_DB:-project03}}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-${POSTGRES_USER:-project03}}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-${POSTGRES_PASSWORD:-change-me-local}}
+      SPRING_DATASOURCE_POOL_SIZE: ${SPRING_DATASOURCE_POOL_SIZE:-5}
     ports: ["8080:8080"]
     depends_on:
       db: {condition: service_healthy}
