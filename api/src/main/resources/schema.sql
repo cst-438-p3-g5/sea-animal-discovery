@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS app_user (
+    id VARCHAR(36) PRIMARY KEY,
+    github_id VARCHAR(32) NOT NULL UNIQUE,
+    email VARCHAR(320) NOT NULL,
+    display_name VARCHAR(255) NOT NULL
+);
