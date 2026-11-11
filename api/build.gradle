@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.2'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.example'
@@ -18,6 +19,9 @@ repositories {
 }
 
 dependencies {
+	testImplementation 'io.rest-assured:rest-assured:6.3.0'
+	testImplementation 'org.testcontainers:postgresql:1.21.3'
+	testImplementation 'org.testcontainers:junit-jupiter:1.21.3'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
 	testRuntimeOnly 'com.h2database:h2'
@@ -33,4 +37,37 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy tasks.named('jacocoTestReport')
+}
+
+tasks.named('jacocoTestReport') {
+	dependsOn tasks.named('test')
+	classDirectories.setFrom(sourceSets.main.output.classesDirs.asFileTree.matching {
+		include '**/*Service.class'
+	})
+	reports {
+		xml.required = true
+		html.required = true
+	}
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+	dependsOn tasks.named('test')
+	classDirectories.setFrom(sourceSets.main.output.classesDirs.asFileTree.matching {
+		include '**/*Service.class'
+	})
+	violationRules {
+		rule {
+			element = 'BUNDLE'
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.70
+			}
+		}
+	}
+}
+
+tasks.named('check') {
+	dependsOn tasks.named('jacocoTestCoverageVerification')
 }

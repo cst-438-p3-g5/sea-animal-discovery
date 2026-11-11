@@ -31,8 +31,18 @@ jobs:
           java-version: '21'
           cache: gradle
 
-      - name: Run API tests
-        run: ./gradlew test --no-daemon
+      - name: Run API tests and service coverage check
+        run: ./gradlew check --no-daemon
+
+  api-image:
+    name: API image build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build API image without publishing
+        run: docker build --tag tidepool-api:ci ./api
 
   app:
     name: Expo app checks

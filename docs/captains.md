@@ -22,5 +22,6 @@ If a captain cannot serve their sprint, record the swap here before the sprint s
 ## Branch protection checklist (at each sprint change)
 
 - [ ] `main` push restriction lists only this sprint's captain and deputy
+- [ ] `main` requires the `API tests`, `API image build`, and `Expo app checks` PR status checks
 - [ ] "Do not allow bypassing the above settings" is on
 - [ ] The previous captain's release is tagged and its notes are published
