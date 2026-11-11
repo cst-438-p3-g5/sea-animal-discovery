@@ -49,14 +49,16 @@ on port `5432` with `sslmode=require`. Compose still starts its local PostgreSQL
 container, but the API uses the Supabase connection when `SPRING_DATASOURCE_URL`
 is set. Never commit `.env` or put database credentials in the client app.
 
-### Run API tests
+### Run API checks
 
 ```bash
 cd api
-./gradlew test
+./gradlew check
 ```
 
-On Windows, use `gradlew.bat test`.
+On Windows, use `gradlew.bat check`.
+This runs the API tests and JaCoCo service-layer coverage verification. Docker
+must be running because the integration tests use Testcontainers.
 
 ### Frontend
 
