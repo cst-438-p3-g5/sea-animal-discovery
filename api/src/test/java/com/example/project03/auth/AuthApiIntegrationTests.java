@@ -2,7 +2,9 @@ package com.example.project03.auth;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -83,6 +85,42 @@ class AuthApiIntegrationTests {
                 .body(signInBody("valid-code", "short", REDIRECT_URI))
                 .when().post("/auth/github")
                 .then().statusCode(400);
+    }
+
+    @Test
+    void rejectsUnverifiedProviderEmailWithoutCreatingAnAccount() {
+        doThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.UNAUTHORIZED,
+                "GitHub sign-in requires a valid code and a verified email."))
+                .when(github).authenticate("unverified-code", VERIFIER, REDIRECT_URI);
+
+        given().port(port).contentType(ContentType.JSON)
+                .body(signInBody("unverified-code", VERIFIER, REDIRECT_URI))
+                .when().post("/auth/github")
+                .then().statusCode(401)
+                .body("detail", containsString("verified email"));
+
+        Long savedUsers = jdbc.sql("SELECT COUNT(*) FROM app_user").query(Long.class).single();
+        org.junit.jupiter.api.Assertions.assertEquals(0L, savedUsers);
+    }
+
+    @Test
+    void returnsConflictAndProviderWhenEmailBelongsToAnotherProvider() {
+        jdbc.sql("""
+                INSERT INTO app_user (id, provider, provider_id, email, display_name)
+                VALUES ('google-user', 'google', 'google-1', 'shared@example.com', 'Google User')
+                """).update();
+        var identity = new GithubClient.Identity("github-1", "shared@example.com", "GitHub User");
+        when(github.authenticate("duplicate-code", VERIFIER, REDIRECT_URI)).thenReturn(identity);
+
+        given().port(port).contentType(ContentType.JSON)
+                .body(signInBody("duplicate-code", VERIFIER, REDIRECT_URI))
+                .when().post("/auth/github")
+                .then().statusCode(409)
+                .body("detail", equalTo("This email is already registered with Google."));
+
+        Long savedUsers = jdbc.sql("SELECT COUNT(*) FROM app_user").query(Long.class).single();
+        org.junit.jupiter.api.Assertions.assertEquals(1L, savedUsers);
     }
 
     @Test

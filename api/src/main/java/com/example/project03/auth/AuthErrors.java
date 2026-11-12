@@ -9,7 +9,12 @@ public class AuthErrors {
     @ExceptionHandler(ResponseStatusException.class)
     ProblemDetail authError(ResponseStatusException error) {
         var detail = ProblemDetail.forStatusAndDetail(error.getStatusCode(), error.getReason());
-        detail.setType(java.net.URI.create("/problems/" + (error.getStatusCode().value() == 401 ? "unauthorized" : "auth-error")));
+        String type = switch (error.getStatusCode().value()) {
+            case 401 -> "unauthorized";
+            case 409 -> "conflict";
+            default -> "auth-error";
+        };
+        detail.setType(java.net.URI.create("/problems/" + type));
         return detail;
     }
 }

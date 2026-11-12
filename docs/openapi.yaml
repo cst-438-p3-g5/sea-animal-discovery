@@ -41,6 +41,8 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
   /auth/google:
     post:
@@ -58,6 +60,8 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
   /users/me:
     get:
@@ -446,6 +450,18 @@ components:
             status: 401
             detail: A valid bearer token is required.
             instance: /sightings/me
+    Conflict:
+      description: The verified email is already registered with the other OAuth provider
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            type: /problems/conflict
+            title: Conflict
+            status: 409
+            detail: This email is already registered with Google.
+            instance: /auth/github
     Forbidden:
       description: The resource belongs to another user
       content:
