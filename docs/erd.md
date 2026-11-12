@@ -6,6 +6,8 @@ erDiagram
 
     USER {
         string id PK
+        string provider
+        string provider_id
         string email
         string display_name
     }

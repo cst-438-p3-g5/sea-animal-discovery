@@ -48,7 +48,9 @@ or secret is sent to the web client or persisted.
 
 Users are upserted by GitHub's immutable numeric ID, with an app UUID as the JWT
 subject. Signing in again updates the verified email while preserving the app
-ID and display name. Accounts are never merged by matching email addresses.
+ID and display name. Accounts are never merged by matching email addresses. If
+that verified email belongs to a Google account, the API returns `409 Conflict`
+and names Google so the user can continue with the existing provider.
 
 The response matches `docs/openapi.yaml`: `access_token` is an HS256 app JWT,
 `token_type` is `Bearer`, and `user` has `id`, `email`, and `display_name`.
