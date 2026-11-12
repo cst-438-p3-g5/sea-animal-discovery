@@ -12,3 +12,13 @@ CREATE TABLE IF NOT EXISTS species (
     habitat VARCHAR(1000) NOT NULL,
     conservation_information VARCHAR(1000) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS sighting (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+    species_id VARCHAR(36) NOT NULL REFERENCES species(id) ON DELETE RESTRICT,
+    sighting_date DATE NOT NULL CHECK (sighting_date <= CURRENT_DATE),
+    notes VARCHAR(500)
+);
+
+CREATE INDEX IF NOT EXISTS sighting_user_date_idx ON sighting (user_id, sighting_date DESC);
