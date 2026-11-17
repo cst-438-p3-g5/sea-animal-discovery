@@ -1,77 +1,62 @@
-# CST 438 Project 03 - Sea Animal Discovery
+# CST 438 Project 03 — Sea Animal Discovery
 
-Sea Animal Discovery is an application that allows users to explore and learn about different sea animals. The project uses Expo to support Web, Android, and iOS from a single codebase.
+Sea Animal Discovery is a web and mobile app for exploring sea animals and recording sightings. The repo contains an Expo client, a Spring Boot API, and a PostgreSQL database.
 
-## Project Structure
+## Clone and start the local API
 
-```text
-sea-animal-discovery/
-├── api/          # Backend API
-├── app/          # Expo frontend (Web, Android, iOS)
-├── docs/         # Project documentation
-├── compose.yml   # Docker configuration
-└── README.md
+```bash
+git clone https://github.com/cst-438-p3-g5/sea-animal-discovery.git
+cd sea-animal-discovery
+cp .env.example .env
 ```
 
-## Tech Stack
+Generate a local JWT signing key with the command below, then replace the commented `# JWT_SECRET=` line in `.env` with `JWT_SECRET=` followed by the generated value:
 
-- **Frontend:** React Native, Expo, TypeScript
-- **Navigation:** Expo Router
-- **Backend:** REST API
-- **Platforms:** Web, Android, iOS
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"
+```
 
-## Getting Started
-
-### Local API and database
-
-First copy `.env.example` to `.env` and set a random `JWT_SECRET` (at least
-32 bytes). See [GitHub sign-in setup](docs/github-sign-in.md) to configure OAuth.
+Start the API and local database:
 
 ```bash
 docker compose up --build
 ```
 
-This starts the API at <http://localhost:8080> and PostgreSQL on port `5432`.
-Compose waits for PostgreSQL to pass its health check before starting the API.
-The API health endpoint is <http://localhost:8080/health> and returns
-`{"status":"UP"}` when the HTTP server is responding.
-The database health endpoint is <http://localhost:8080/actuator/health>; its
-`db` component reports whether the API can connect to PostgreSQL.
-The database defaults are for local development and can be overridden with
-`POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` environment variables.
-Use `docker compose down` to stop the services. Add `-v` only when you also
-want to remove the local PostgreSQL data volume.
+The API listens on <http://localhost:8080>. Check <http://localhost:8080/health> for API availability and <http://localhost:8080/actuator/health> for API and database health. See the [onboarding runbook](docs/runbook.md) for the full setup, API walkthrough, test commands, and issue-report format.
 
-To use Supabase instead, copy `.env.example` to `.env`, uncomment and fill in
-the `SPRING_DATASOURCE_*` values from your Supabase project's **Connect** panel,
-then run `docker compose up --build`. Use the JDBC **Session pooler** connection
-on port `5432` with `sslmode=require`. Compose still starts its local PostgreSQL
-container, but the API uses the Supabase connection when `SPRING_DATASOURCE_URL`
-is set. Never commit `.env` or put database credentials in the client app.
+The clone command checks out the repository's default branch. For the class check-in, use the documented default branch and follow the runbook from top to bottom.
 
-### Run API checks
+## Tests
+
+The API tests use Testcontainers, so Docker must be running:
 
 ```bash
 cd api
 ./gradlew check
+cd ..
 ```
 
-On Windows, use `gradlew.bat check`.
-This runs the API tests and JaCoCo service-layer coverage verification. Docker
-must be running because the integration tests use Testcontainers.
+On Windows PowerShell, run `.\gradlew.bat check` from `api`.
 
-### Frontend
-
-The Expo app lives in `app/sea-animal-discovery`:
+The app tests and static checks use Node.js 22:
 
 ```bash
 cd app/sea-animal-discovery
-npm install
+npm ci
+npm test
+npx expo lint
+npx tsc --noEmit
+```
+
+## Run the app
+
+From the repository root, copy the Expo example environment file and start the app:
+
+```bash
+cd app/sea-animal-discovery
+cp .env.example .env
+npm ci
 npx expo start
 ```
 
-Once Expo starts, press:
-
-- `w` to open Web
-- `a` to open Android
-- `i` to open iOS (macOS)
+Press `w` for web, `a` for Android, or `i` for the iOS simulator on macOS. For real GitHub sign-in, configure the API and Expo OAuth values using the [GitHub sign-in guide](docs/github-sign-in.md). OAuth is not required to start the API or run automated tests.
