@@ -10,4 +10,4 @@ const defaultApiUrl = Platform.OS === 'web'
   : `http://${metroHost ?? '10.0.2.2'}:8080`;
 const apiUrl = process.env.EXPO_PUBLIC_API_URL?.trim() || defaultApiUrl;
 
-export const { apiRequest, exchangeGithubCode, signInAsTestUser } = createApiClient(apiUrl);
+export const { apiRequest, exchangeGithubCode, exchangeGoogleCode, signInAsTestUser } = createApiClient(apiUrl);

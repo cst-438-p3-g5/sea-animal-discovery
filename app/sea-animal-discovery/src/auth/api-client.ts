@@ -23,6 +23,14 @@ export function createApiClient(apiUrl: string) {
     });
   }
 
+  function exchangeGoogleCode(code: string, verifier: string, redirectUri: string) {
+    return apiRequest<Session>('/auth/google', undefined, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, code_verifier: verifier, redirect_uri: redirectUri }),
+    });
+  }
+
   function signInAsTestUser(username: string, password: string) {
     return apiRequest<Session>('/auth/test', undefined, {
       method: 'POST',
@@ -31,5 +39,5 @@ export function createApiClient(apiUrl: string) {
     });
   }
 
-  return { apiRequest, exchangeGithubCode, signInAsTestUser };
+  return { apiRequest, exchangeGithubCode, exchangeGoogleCode, signInAsTestUser };
 }

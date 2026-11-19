@@ -4,7 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import { Button, StyleSheet, View } from 'react-native';
 
-import { exchangeGithubCode, User } from '@/auth/api';
+import { exchangeGithubCode } from '@/auth/api';
 import { useAuth } from '@/auth/context';
 import { ThemedText } from './themed-text';
 
@@ -47,28 +47,9 @@ export function GithubSignIn() {
     }
   }
 
-  async function checkProfile() {
-    setBusy(true);
-    setMessage('');
-    try {
-      const profile = await auth.request<User>('/users/me');
-      setMessage(`Authenticated as ${profile.display_name} (${profile.email}).`);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Unable to load your profile.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
   return (
     <View style={styles.container}>
-      {auth.session ? (
-        <>
-          <ThemedText style={styles.centered}>Signed in as {auth.session.user.display_name}</ThemedText>
-          <Button title={busy ? 'Loading…' : 'Check my profile'} disabled={busy} onPress={checkProfile} />
-          <Button title="Sign out" disabled={busy} onPress={() => { auth.signOut(); setMessage(''); }} />
-        </>
-      ) : (
+      {!auth.session && (
         <>
           <ThemedText style={styles.centered}>Sign in with a verified GitHub email to get started.</ThemedText>
           <Button title={busy ? 'Signing in…' : 'Sign in with GitHub'} disabled={!clientId || !request || busy} onPress={signIn} />

@@ -4,6 +4,7 @@
 node_modules/
 dist/
 .gradle/
+**/.gradle-user-home/
 **/build/
 local.properties
 .externalNativeBuild/

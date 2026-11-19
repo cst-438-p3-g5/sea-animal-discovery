@@ -16,9 +16,15 @@ public class AuthController {
     }
 
     @PostMapping("/auth/github")
-    public ResponseEntity<AuthService.SignInResponse> signIn(@RequestBody CodeRequest request) {
+    public ResponseEntity<AuthService.SignInResponse> signInGithub(@RequestBody CodeRequest request) {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
                 .body(auth.signIn(request.code(), request.code_verifier(), request.redirect_uri()));
+    }
+
+    @PostMapping("/auth/google")
+    public ResponseEntity<AuthService.SignInResponse> signInGoogle(@RequestBody CodeRequest request) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+                .body(auth.signInGoogle(request.code(), request.code_verifier(), request.redirect_uri()));
     }
 
     @GetMapping("/users/me")

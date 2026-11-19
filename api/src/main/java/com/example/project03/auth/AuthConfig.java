@@ -48,7 +48,7 @@ public class AuthConfig {
                 .csrf(c -> c.disable()) // Stateless bearer tokens; no cookie authentication.
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers("/health", "/actuator/health", "/auth/github", "/auth/test", "/species", "/species/*").permitAll()
+                        .requestMatchers("/health", "/actuator/health", "/auth/github", "/auth/google", "/auth/test", "/species", "/species/*").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(o -> o.jwt(j -> {}).authenticationEntryPoint((request, response, error) -> {
                     response.setStatus(401);

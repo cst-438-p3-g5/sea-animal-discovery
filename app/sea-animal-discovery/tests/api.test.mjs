@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
 import { createApiClient } from '../src/auth/api-client.ts';
 
-const { apiRequest, exchangeGithubCode, signInAsTestUser } = createApiClient('http://localhost:8080');
+const { apiRequest, exchangeGithubCode, exchangeGoogleCode, signInAsTestUser } = createApiClient('http://localhost:8080');
 
 const originalFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = originalFetch; });
@@ -27,6 +27,18 @@ test('authenticated requests send JWT and preserve other headers', async () => {
     return Response.json({ id: '1' });
   };
   assert.deepEqual(await apiRequest('/users/me', 'app-jwt', { headers: { Accept: 'application/json' } }), { id: '1' });
+});
+
+test('Google code exchange uses the same PKCE API contract without a provider secret', async () => {
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, 'http://localhost:8080/auth/google');
+    assert.equal(init.method, 'POST');
+    assert.equal(init.headers.get('Content-Type'), 'application/json');
+    assert.equal(init.headers.has('Authorization'), false);
+    assert.deepEqual(JSON.parse(init.body), { code: 'code', code_verifier: 'verifier', redirect_uri: 'http://localhost:8081' });
+    return Response.json({ access_token: 'app-jwt', token_type: 'Bearer', user: { id: '1' } });
+  };
+  assert.equal((await exchangeGoogleCode('code', 'verifier', 'http://localhost:8081')).access_token, 'app-jwt');
 });
 
 test('shows API problem detail and handles non-JSON failures', async () => {
