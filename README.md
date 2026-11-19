@@ -60,3 +60,5 @@ npx expo start
 ```
 
 Press `w` for web, `a` for Android, or `i` for the iOS simulator on macOS. For real GitHub sign-in, configure the API and Expo OAuth values using the [GitHub sign-in guide](docs/github-sign-in.md). OAuth is not required to start the API or run automated tests.
+
+The local Compose profile seeds a test account and enables a username/password form below GitHub sign-in. Use username `testuser` and password `tidepool123`. This account is for local development only; do not use the `local` profile for a deployed API.

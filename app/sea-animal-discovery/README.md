@@ -12,6 +12,8 @@ npx expo start
 
 Press `w` for web, `a` for Android, or `i` for the iOS simulator on macOS. The `EXPO_PUBLIC_*` settings in `.env` are public client configuration; never put a provider secret, database password, or JWT signing key here.
 
+When the API is running with the local Docker Compose profile, `.env.example` enables a username/password form below GitHub sign-in. Use username `testuser` and password `tidepool123`. This seeded account is for local development only.
+
 GitHub sign-in setup is documented in [docs/github-sign-in.md](../../docs/github-sign-in.md). Google sign-in is not configured yet.
 
 ## Checks

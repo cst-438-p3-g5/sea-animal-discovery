@@ -72,6 +72,9 @@ public class AuthService {
         }
     }
 
+    public SignInResponse signInAsTestUser(String userId) {
+        return issueToken(users.find(userId));
+    }
     private SignInResponse issueToken(UserRepository.User user) {
         Instant now = Instant.now();
         var claims = JwtClaimsSet.builder().issuer(AuthConfig.ISSUER).subject(user.id())

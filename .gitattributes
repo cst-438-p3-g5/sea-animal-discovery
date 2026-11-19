@@ -1,0 +1,3 @@
+# The API image runs this wrapper in a Linux shell, including after a Windows checkout.
+*.sh text eol=lf
+/api/gradlew text eol=lf
