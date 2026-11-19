@@ -124,6 +124,14 @@ class AuthApiIntegrationTests {
     }
 
     @Test
+    void localTestLoginRouteIsUnavailableWithoutLocalProfile() {
+        given().port(port).contentType(ContentType.JSON)
+                .body("{\"username\":\"testuser\",\"password\":\"tidepool123\"}")
+                .when().post("/auth/test")
+                .then().statusCode(404);
+    }
+
+    @Test
     void returnsUnauthorizedForProfileWithoutBearerToken() {
         given().port(port).accept(ContentType.JSON).contentType(ContentType.JSON)
                 .when().get("/users/me")

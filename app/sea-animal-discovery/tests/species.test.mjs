@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
-import { describeError, getSpecies, listSpecies } from '../src/species/api.ts';
+import { createApiClient } from '../src/auth/api-client.ts';
+import { createSpeciesApi, describeError } from '../src/species/api-client.ts';
+
+const { apiRequest } = createApiClient('http://localhost:8080');
+const { getSpecies, listSpecies } = createSpeciesApi(apiRequest);
 
 const originalFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = originalFetch; });
