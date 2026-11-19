@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GithubSignIn } from '@/components/github-sign-in';
 import { GoogleSignIn } from '@/components/google-sign-in';
+import { AuthStatus } from '@/components/auth-status';
 import { TestUserSignIn } from '@/components/test-user-sign-in';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -11,6 +12,7 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.content}>
         <ThemedText type="title" style={styles.title}>Sea Animal Discovery</ThemedText>
+        <AuthStatus />
         <GithubSignIn />
         <GoogleSignIn />
         <TestUserSignIn />

@@ -4,7 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { Platform, Button, View } from 'react-native';
 import { useState } from 'react';
 
-import { exchangeGoogleCode, User } from '@/auth/api';
+import { exchangeGoogleCode } from '@/auth/api';
 import { useAuth } from '@/auth/context';
 import { ThemedText } from './themed-text';
 
@@ -55,28 +55,9 @@ export function GoogleSignIn() {
     }
   }
 
-  async function checkProfile() {
-    setBusy(true);
-    setMessage('');
-    try {
-      const profile = await auth.request<User>('/users/me');
-      setMessage(`Authenticated as ${profile.display_name} (${profile.email}).`);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Unable to load your profile.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
   return (
     <View style={{ gap: 12, width: '100%', maxWidth: 420 }}>
-      {auth.session ? (
-        <>
-          <ThemedText>Signed in as {auth.session.user.display_name}</ThemedText>
-          <Button title={busy ? 'Loading…' : 'Check my profile'} disabled={busy} onPress={checkProfile} />
-          <Button title="Sign out" disabled={busy} onPress={() => { auth.signOut(); setMessage(''); }} />
-        </>
-      ) : (
+      {!auth.session && (
         <>
           <ThemedText>Sign in with a verified Google email to get started.</ThemedText>
           <Button title={busy ? 'Signing in…' : 'Sign in with Google'} disabled={!clientId || !request || busy} onPress={signIn} />

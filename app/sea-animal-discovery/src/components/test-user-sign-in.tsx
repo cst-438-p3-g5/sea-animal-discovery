@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { signInAsTestUser } from '@/auth/api';
 import { useAuth } from '@/auth/context';
@@ -16,15 +16,7 @@ export function TestUserSignIn() {
 
   if (!enabled) return null;
 
-  if (auth.session) {
-    if (Platform.OS === 'web' || auth.session.user.id !== 'local-test-user') return null;
-    return (
-      <View style={styles.container}>
-        <ThemedText>Signed in as {auth.session.user.display_name}</ThemedText>
-        <Button title="Sign out" onPress={auth.signOut} />
-      </View>
-    );
-  }
+  if (auth.session) return null;
 
   async function signIn() {
     if (busy) return;
