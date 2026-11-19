@@ -2,7 +2,7 @@ import { CodeChallengeMethod, ResponseType, useAuthRequest } from 'expo-auth-ses
 import * as Crypto from 'expo-crypto';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
-import { Button, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 
 import { exchangeGithubCode, User } from '@/auth/api';
 import { useAuth } from '@/auth/context';
@@ -61,21 +61,26 @@ export function GithubSignIn() {
   }
 
   return (
-    <View style={{ gap: 12, width: '100%', maxWidth: 420 }}>
+    <View style={styles.container}>
       {auth.session ? (
         <>
-          <ThemedText>Signed in as {auth.session.user.display_name}</ThemedText>
+          <ThemedText style={styles.centered}>Signed in as {auth.session.user.display_name}</ThemedText>
           <Button title={busy ? 'Loading…' : 'Check my profile'} disabled={busy} onPress={checkProfile} />
           <Button title="Sign out" disabled={busy} onPress={() => { auth.signOut(); setMessage(''); }} />
         </>
       ) : (
         <>
-          <ThemedText>Sign in with a verified GitHub email to get started.</ThemedText>
+          <ThemedText style={styles.centered}>Sign in with a verified GitHub email to get started.</ThemedText>
           <Button title={busy ? 'Signing in…' : 'Sign in with GitHub'} disabled={!clientId || !request || busy} onPress={signIn} />
-          {!clientId && <ThemedText>GitHub sign-in has not been configured.</ThemedText>}
+          {!clientId && <ThemedText style={styles.centered}>GitHub sign-in has not been configured.</ThemedText>}
         </>
       )}
-      {!!message && <ThemedText accessibilityLiveRegion="polite">{message}</ThemedText>}
+      {!!message && <ThemedText accessibilityLiveRegion="polite" style={styles.centered}>{message}</ThemedText>}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { gap: 12, width: '100%', maxWidth: 420 },
+  centered: { textAlign: 'center' },
+});

@@ -36,6 +36,14 @@ public class AuthService {
         }
 
         var user = users.signIn(github.authenticate(code, verifier, redirectUri));
+        return issueToken(user);
+    }
+
+    public SignInResponse signInAsTestUser(String userId) {
+        return issueToken(users.find(userId));
+    }
+
+    private SignInResponse issueToken(UserRepository.User user) {
         Instant now = Instant.now();
         var claims = JwtClaimsSet.builder().issuer(AuthConfig.ISSUER).subject(user.id())
                 .issuedAt(now).expiresAt(now.plusSeconds(3600)).build();

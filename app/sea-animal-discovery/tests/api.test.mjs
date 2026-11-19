@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
-import { apiRequest, exchangeGithubCode } from '../src/auth/api.ts';
+import { apiRequest, exchangeGithubCode, signInAsTestUser } from '../src/auth/api.ts';
 
 const originalFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = originalFetch; });
@@ -32,4 +32,15 @@ test('shows API problem detail and handles non-JSON failures', async () => {
   await assert.rejects(exchangeGithubCode('bad', 'verifier', 'http://localhost:8081'), /A verified email is required/);
   globalThis.fetch = async () => new Response('gateway unavailable', { status: 502 });
   await assert.rejects(apiRequest('/users/me', 'expired'), /Request failed \(502\)/);
+});
+
+test('test-user sign-in sends username and password to the local API', async () => {
+  globalThis.fetch = async (url, init) => {
+    assert.equal(url, 'http://localhost:8080/auth/test');
+    assert.equal(init.method, 'POST');
+    assert.equal(init.headers.get('Content-Type'), 'application/json');
+    assert.deepEqual(JSON.parse(init.body), { username: 'testuser', password: 'tidepool123' });
+    return Response.json({ access_token: 'local-app-jwt', token_type: 'Bearer', user: { id: 'local-test-user' } });
+  };
+  assert.equal((await signInAsTestUser('testuser', 'tidepool123')).access_token, 'local-app-jwt');
 });

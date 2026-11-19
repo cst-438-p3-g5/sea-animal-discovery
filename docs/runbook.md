@@ -72,7 +72,7 @@ Expected results:
 - `/species/sp-001` returns the Ochre sea star profile.
 - `/users/me` returns HTTP 401 without a bearer token. This is expected and confirms the profile route requires authentication.
 
-The API currently provides `GET /health`, `GET /species`, `GET /species/{id}`, `POST /auth/github`, `GET /users/me`, and authenticated `POST /sightings`. For this onboarding check, health and species endpoints are enough to confirm the local stack is working. Sign-in credentials are not needed to run the tests.
+The API currently provides `GET /health`, `GET /species`, `GET /species/{id}`, `POST /auth/github`, `GET /users/me`, and authenticated `POST /sightings`. The local Compose profile also enables `POST /auth/test` and seeds a test account. The Expo example environment enables a username/password form below GitHub sign-in; use username `testuser` and password `tidepool123`. This account is local-only. For this onboarding check, health and species endpoints are enough to confirm the API is working. Sign-in credentials are not needed to run the tests.
 
 If a check fails, inspect the service state and logs:
 
