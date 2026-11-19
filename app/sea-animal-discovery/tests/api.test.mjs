@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
-import { apiRequest, exchangeGithubCode, signInAsTestUser } from '../src/auth/api.ts';
+import { createApiClient } from '../src/auth/api-client.ts';
+
+const { apiRequest, exchangeGithubCode, signInAsTestUser } = createApiClient('http://localhost:8080');
 
 const originalFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = originalFetch; });
