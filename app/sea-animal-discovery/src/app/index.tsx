@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GithubSignIn } from '@/components/github-sign-in';
+import { GoogleSignIn } from '@/components/google-sign-in';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
@@ -11,6 +12,7 @@ export default function HomeScreen() {
         <ThemedText type="title">Sea Animal Discovery</ThemedText>
         <ThemedText>Explore the ocean. Keep track of what you discover.</ThemedText>
         <GithubSignIn />
+        <GoogleSignIn />
       </SafeAreaView>
     </ThemedView>
   );

@@ -21,3 +21,11 @@ export function exchangeGithubCode(code: string, verifier: string, redirectUri: 
     body: JSON.stringify({ code, code_verifier: verifier, redirect_uri: redirectUri }),
   });
 }
+
+export function exchangeGoogleCode(code: string, verifier: string, redirectUri: string) {
+  return apiRequest<Session>('/auth/google', undefined, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, code_verifier: verifier, redirect_uri: redirectUri }),
+  });
+}

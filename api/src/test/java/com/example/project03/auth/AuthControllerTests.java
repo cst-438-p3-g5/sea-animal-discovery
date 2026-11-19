@@ -22,9 +22,11 @@ class AuthControllerTests {
     @Autowired JwtEncoder encoder;
     @Autowired JwtDecoder decoder;
     @MockitoBean GithubClient github;
+    @MockitoBean GoogleClient google;
     @MockitoBean UserRepository users;
     static final String VERIFIER = "v".repeat(43);
     static final GithubClient.Identity IDENTITY = new GithubClient.Identity("42", "diver@example.com", "Diver");
+    static final GoogleClient.Identity GOOGLE_IDENTITY = new GoogleClient.Identity("google-42", "google@example.com", "Google Diver");
     static final UserRepository.User USER = new UserRepository.User("app-user-id", "diver@example.com", "Diver");
 
     String body(String verifier, String redirect) {
@@ -60,7 +62,36 @@ class AuthControllerTests {
                 .andExpect(status().isBadRequest());
         mvc.perform(post("/auth/github").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
-        verifyNoInteractions(github, users);
+        verifyNoInteractions(github, google, users);
+    }
+
+    @Test void googleSignInUsesTheSameAppJwtContract() throws Exception {
+        when(google.authenticate("code", VERIFIER, "http://localhost:8081")).thenReturn(GOOGLE_IDENTITY);
+        when(users.signIn("google", GOOGLE_IDENTITY.id(), GOOGLE_IDENTITY.email(), GOOGLE_IDENTITY.displayName())).thenReturn(USER);
+
+        mvc.perform(post("/auth/google").contentType(MediaType.APPLICATION_JSON)
+                        .content(body(VERIFIER, "http://localhost:8081")))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Cache-Control", "no-store"))
+                .andExpect(jsonPath("$.token_type").value("Bearer"))
+                .andExpect(jsonPath("$.user.email").value(USER.email()));
+    }
+
+    @Test void googleSignInRejectsAnUnapprovedRedirectBeforeProviderCall() throws Exception {
+        mvc.perform(post("/auth/google").contentType(MediaType.APPLICATION_JSON)
+                        .content(body(VERIFIER, "https://attacker.example")))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(google, users);
+    }
+
+    @Test void googleSignInAcceptsTheNativeRedirectUri() throws Exception {
+        when(google.authenticate("code", VERIFIER, "seaanimaldiscovery:/oauthredirect")).thenReturn(GOOGLE_IDENTITY);
+        when(users.signIn("google", GOOGLE_IDENTITY.id(), GOOGLE_IDENTITY.email(), GOOGLE_IDENTITY.displayName())).thenReturn(USER);
+
+        mvc.perform(post("/auth/google").contentType(MediaType.APPLICATION_JSON)
+                        .content(body(VERIFIER, "seaanimaldiscovery:/oauthredirect")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token_type").value("Bearer"));
     }
 
     @Test void rejectsMissingMalformedExpiredAndWrongIssuerJwt() throws Exception {
